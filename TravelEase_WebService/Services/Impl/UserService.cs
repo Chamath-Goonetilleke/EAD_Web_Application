@@ -17,6 +17,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TravelEase_WebService.DTO;
 using TravelEase_WebService.Utils;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace TravelEase_WebService.Services
 {
@@ -26,8 +28,9 @@ namespace TravelEase_WebService.Services
         private readonly IMongoCollection<TravelAgent> _travelAgentCollection;
         private readonly IConfiguration _configuration;
         private readonly PasswordEncryptionUtil _passwordEncryptionUtil;
+        private readonly Account account;
 
-        public UserService(IOptions<DatabaseSettings> options, IConfiguration configuration, PasswordEncryptionUtil passwordEncryptionUtil)
+        public UserService(IOptions<DatabaseSettings> options, IConfiguration configuration, PasswordEncryptionUtil passwordEncryptionUtil, Account account)
         {
 
             var mongoClient = new MongoClient(options.Value.ConnectionString);
@@ -40,6 +43,7 @@ namespace TravelEase_WebService.Services
                   .GetCollection<TravelAgent>(options.Value.TravelAgentCollectionName);
 
             _passwordEncryptionUtil = passwordEncryptionUtil;
+            this.account = account;
         }
 
         //------------------------------------------------------------------------------
@@ -231,6 +235,57 @@ namespace TravelEase_WebService.Services
 
             }
             return currentUser;
+
+        }
+
+        public async Task ImageUpload(IFormFile file, string nic, string role)
+        {
+            var cloudinary = new Cloudinary(account);
+
+
+            if (file != null && file.Length > 0)
+            {
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                };
+
+                var uploadResult = await cloudinary.UploadAsync(uploadParams);
+
+                string imageUrl = uploadResult.SecureUri.AbsoluteUri;
+
+                var userRole = role ?? throw new Exception("User role cannot be null.");
+
+                if (userRole == "TravelAgent")
+                {
+                    var user = await _travelAgentCollection.Find(u => u.Nic == nic).
+                        FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+                    var filter = Builders<TravelAgent>.Filter.Eq(u => u.Nic, nic);
+                    var update = Builders<TravelAgent>.Update
+                        .Set(u => u.ImageUrl, imageUrl);
+
+                    await _travelAgentCollection.UpdateOneAsync(filter, update);
+                }
+                else if (userRole == "BackOfficeUser")
+                {
+                    var user = await _bouCollection.Find(u => u.Nic == nic).
+                        FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+                    var filter = Builders<BackOfficeUser>.Filter.Eq(u => u.Nic, nic);
+                    var update = Builders<BackOfficeUser>.Update
+                        .Set(u => u.ImageUrl, imageUrl);
+
+                    await _bouCollection.UpdateOneAsync(filter, update);
+                }
+            }
+            else
+            {
+                throw new Exception("No Image File Found");
+            }
+
+
 
         }
     }

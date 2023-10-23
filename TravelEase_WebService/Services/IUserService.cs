@@ -16,6 +16,7 @@ namespace TravelEase_WebService.Services
         Task<string> Auth(AuthUserDTO authUser);
         Task CreateUser(UserDTO userDTO);
         Task UpdateUser(UserDTO userDTO, string uId);
+        Task ImageUpload(IFormFile file, string nic, string role);
         Task<CurrentUserDTO> GetCurrentUser(string role, string id);
     }
 }

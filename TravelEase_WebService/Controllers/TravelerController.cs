@@ -139,6 +139,24 @@ namespace TravelEase_WebService.Controllers
             }
         }
 
+
+        [Route("imageUpload/{nic}")]
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UploadImage(IFormFile file, string nic)
+        {
+            try
+            {
+                await _travelerService.ImageUploading(file, nic);
+                return Ok("Profile Picture Updated");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error: " + e.Message);
+            }
+        }
+
+
         //------------------------------------------------------------------------------
         // Method: ActivateTraveler
         // Purpose: Activates a traveler's account.

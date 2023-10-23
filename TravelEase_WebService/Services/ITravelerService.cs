@@ -18,6 +18,7 @@ namespace TravelEase_WebService.Services
         Task<List<CurrentUserDTO>> GetAllTravelers();
         Task<CurrentUserDTO> GetTravelerByNIC(string nic);
         Task UpdateTraveler(UserDTO userDTO);
+        Task ImageUploading(IFormFile file, string nic);
         Task ActivateTravelerAccount(string nic);
         Task DeactivateTravelerAccount(string nic);
         Task DeleteTraveler(string nic);

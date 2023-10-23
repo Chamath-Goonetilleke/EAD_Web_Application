@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelEase_WebService.DTO;
 using TravelEase_WebService.Services;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace TravelEase_WebService.Controllers
 {
@@ -20,12 +22,13 @@ namespace TravelEase_WebService.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
+        
 
         public UserController(IUserService userService)
         {
             this.userService = userService;
-        }
-
+            
+}
         //------------------------------------------------------------------------------
         // Method: Auth
         // Purpose: Authenticates a user and sets a token cookie upon successful login.
@@ -74,6 +77,25 @@ namespace TravelEase_WebService.Controllers
                 return BadRequest("Error: " + e.Message);
             }
         }
+
+
+        [Route("imageUpload/{nic}")]
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UploadImage(IFormFile file, string nic)
+        {
+            try
+            {
+                var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserRole")?.Value;
+                await userService.ImageUpload(file, nic, userRole);
+                return Ok("Profile Picture Updated");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error: " + e.Message);
+            }
+        }
+
 
         //------------------------------------------------------------------------------
         // Method: UpdateUser

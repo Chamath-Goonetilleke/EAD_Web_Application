@@ -10,6 +10,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -25,8 +27,9 @@ namespace TravelEase_WebService.Services
         private readonly IMongoCollection<Traveler> _travelerCollection;
         private readonly PasswordEncryptionUtil _passwordEncryptionUtil;
         private readonly IConfiguration _configuration;
+        private readonly Account account;
 
-        public TravelerService(IOptions<DatabaseSettings> options, IConfiguration configuration, PasswordEncryptionUtil passwordEncryptionUtil)
+        public TravelerService(IOptions<DatabaseSettings> options, IConfiguration configuration, PasswordEncryptionUtil passwordEncryptionUtil, Account account)
         {
 
             var mongoClient = new MongoClient(options.Value.ConnectionString);
@@ -35,6 +38,7 @@ namespace TravelEase_WebService.Services
                   .GetCollection<Traveler>(options.Value.TravelerCollectionName);
             _configuration = configuration;
             _passwordEncryptionUtil = passwordEncryptionUtil;
+            this.account = account;
         }
 
         //------------------------------------------------------------------------------
@@ -216,6 +220,37 @@ namespace TravelEase_WebService.Services
 
         }
 
+        public async Task ImageUploading(IFormFile file, string nic)
+        {
+            var cloudinary = new Cloudinary(account);
+
+
+            if (file != null && file.Length > 0)
+            {
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                };
+
+                var uploadResult = await cloudinary.UploadAsync(uploadParams);
+
+                string imageUrl = uploadResult.SecureUri.AbsoluteUri;
+
+                var traveler = await _travelerCollection.Find(t => t.Nic == nic).
+                FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+                var filter = Builders<Traveler>.Filter.Eq(u => u.Nic, nic);
+                var update = Builders<Traveler>.Update
+                    .Set(u => u.ImageUrl, imageUrl);
+
+                await _travelerCollection.UpdateOneAsync(filter, update);
+            }
+            else
+            {
+                throw new Exception("No Image File Found");
+            }
+        }
     }
 }
 

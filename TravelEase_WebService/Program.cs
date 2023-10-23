@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TravelEase_WebService.Utils;
+using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -20,6 +21,11 @@ var config = builder.Configuration;
 // Configure database settings
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddSingleton(new Account(
+    builder.Configuration["CloudinarySettings:CloudName"],
+    builder.Configuration["CloudinarySettings:ApiKey"],
+    builder.Configuration["CloudinarySettings:ApiSecret"]
+));
 builder.Services.AddControllers();
 
 // Configure authentication and authorization
