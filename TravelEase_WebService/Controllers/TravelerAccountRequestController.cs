@@ -10,6 +10,8 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TravelEase_WebService.DTO;
+using TravelEase_WebService.Models;
 using TravelEase_WebService.Services;
 
 namespace TravelEase_WebService.Controllers
@@ -38,6 +40,33 @@ namespace TravelEase_WebService.Controllers
             {
                 var reqList = await _requestService.GetAllRequests();
                 return Ok(reqList);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+        }
+
+        //------------------------------------------------------------------------------
+        // Method: CreateNewRequest
+        // Purpose: create a new traveler account activation request.
+        //------------------------------------------------------------------------------
+        [Route("newActivationRequest/{nic}")]
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult> CreateNewRequest(String nic)
+        {
+            try
+            {
+                var request = new TravelerAccountRequest()
+                {
+                    TravelerNIC = nic,
+                    RequestType = 0,
+                    Time = DateTime.Now
+                };
+                await _requestService.CreateNewRequest(request);
+
+                return Ok(new Message() { Res="Successfully Create Request"});
             }
             catch (Exception e)
             {

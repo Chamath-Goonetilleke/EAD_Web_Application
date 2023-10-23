@@ -172,7 +172,7 @@ namespace TravelEase_WebService.Controllers
             try
             {
                 await _travelerService.DeactivateTravelerAccount(nic);
-                return Ok("Successfully Deactivated");
+                return Ok(new Message() { Res= "Successfully Deactivated" });
             }
             catch (Exception e)
             {
@@ -192,7 +192,7 @@ namespace TravelEase_WebService.Controllers
             try
             {
                 await _travelerService.DeleteTraveler(nic);
-                return Ok("Successfully Deleted");
+                return Ok(new Message() { Res = "Successfully Deleted" });
             }
             catch (Exception e)
             {

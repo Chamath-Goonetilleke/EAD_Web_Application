@@ -155,9 +155,9 @@ namespace TravelEase_WebService.Controllers
                 await _reservationService.UpdateReservation(updateDTO);
                 if (updateDTO.IsCancel == true)
                 {
-                    return Ok("Reservation Cancelled");
+                    return Ok(new Message() { Res = "Reservation Cancelled" });
                 }
-                return Ok("Reservation Updated");
+                return Ok(new Message() { Res = "Reservation Updated" });
             }
             catch (Exception e)
             {

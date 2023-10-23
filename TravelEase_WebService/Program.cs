@@ -19,6 +19,7 @@ var config = builder.Configuration;
 
 // Configure database settings
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddControllers();
 
 // Configure authentication and authorization
@@ -67,15 +68,7 @@ builder.Services.AddScoped<ITravelerAccountRequestService,TravelerAccountRequest
 builder.Services.AddScoped<IReservationService,ReservationService>();
 builder.Services.AddScoped<PasswordEncryptionUtil>();
 
-
-//var host = builder.WebHost;
-//host.ConfigureKestrel(options =>
-//{
-//    options.Listen(System.Net.IPAddress.Parse("192.168.8.193"), 5065);
-//});
-
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {

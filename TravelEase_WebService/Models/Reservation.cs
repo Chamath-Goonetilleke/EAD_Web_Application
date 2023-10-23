@@ -31,6 +31,7 @@ namespace TravelEase_WebService.Models
         public required string ClassPrice { get; set; }
         public required string TotalPrice { get; set; }
         public required List<Passenger> Passengers { get; set; }
+        public List<Ticket>? Tickets { get; set; }
 
         public required bool IsTravelerCreated { get; set; }
         public string? TravelAgentId { get; set; }

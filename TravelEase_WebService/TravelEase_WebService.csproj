@@ -33,5 +33,6 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.22.0" />
   </ItemGroup>
 </Project>

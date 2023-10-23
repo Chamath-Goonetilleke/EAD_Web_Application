@@ -13,6 +13,7 @@ using TravelEase_WebService.Data;
 using TravelEase_WebService.DTO;
 using TravelEase_WebService.Models;
 
+
 namespace TravelEase_WebService.Services
 {
     public class ReservationService : IReservationService
@@ -43,6 +44,7 @@ namespace TravelEase_WebService.Services
 
             foreach (var schedule in trainsSchedules)
             {
+              
                 var stationList = new List<string>();
                 foreach (var station in schedule.Stations)
                 {
@@ -66,7 +68,31 @@ namespace TravelEase_WebService.Services
         //------------------------------------------------------------------------------
         public async Task CreateNewReservation(Reservation reservation)
         {
+            List<Ticket> tickets = new List<Ticket>();
+            Random random = new Random();
+            int platform = random.Next(1, 5);
+            for (int i =0; i< reservation.Passengers.Count()+1; i++)
+            {
+                
+                int ticketNumber = random.Next(1000, 5000);
+                int seatNO = random.Next(1, 50);
+                
+
+                Ticket ticket = new()
+                {
+                    No = ticketNumber.ToString(),
+                    Trip = reservation.From + " to " + reservation.To,
+                    ClassName = reservation.TrainClass,
+                    SeatNo ="A"+ seatNO.ToString(),
+                    Platform = platform.ToString(),
+                    Time = (reservation.Time).Split(" ")[0]
+                };
+
+                tickets.Add(ticket);
+            }
+
             reservation.IsCancelled = false;
+            reservation.Tickets = tickets;
             await _reservationCollection.InsertOneAsync(reservation);
         }
 
