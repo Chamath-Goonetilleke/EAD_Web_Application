@@ -65,6 +65,9 @@ namespace TravelEase_WebService.Models
 
         [BsonElement("availableCount")]
         public int? AvailableCount { get; set; }
+
+        [BsonElement("Price")]
+        public float? Price { get; set; }
     }
 }
 
