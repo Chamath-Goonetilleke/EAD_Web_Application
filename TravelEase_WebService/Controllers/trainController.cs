@@ -28,7 +28,7 @@
  * - Microsoft.AspNetCore.Mvc (included in Microsoft.AspNetCore.App package)
  * - MongoDB.Driver (install via NuGet Package Manager: Install-Package MongoDB.Driver)
  * - [List any other external libraries or packages required]
- * gg
+ *
  * Note:
  * - Ensure that proper error handling and input validation are implemented in the endpoint methods.
  * - Include appropriate security measures, such as authentication and authorization, based on your project's requirements.

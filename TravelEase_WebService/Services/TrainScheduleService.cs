@@ -237,9 +237,63 @@ namespace TravelEase_WebService.Services
             Console.WriteLine("update reseation is get count" + count);
             //return (int)count;
 
-            if (count > 0)
+            if (IsCancled)
             {
-                var update = Builders<TrainSchedule>.Update
+
+                if (count > 0)
+                {
+                    Console.WriteLine("Cannot Cancel Schedule");
+                    return false;
+
+                }
+                else
+                {
+                    var updatedResult = await UpdateScheduleInCalceled(filter, trainSchedule);
+                    Console.WriteLine($"updateResult: {updatedResult}");
+                    if (updatedResult.ModifiedCount > 0 && updatedResult.IsAcknowledged)
+                    {
+                        Console.WriteLine("Update Schedule is successful.");
+                        return true;
+                    }
+                    else if (updatedResult.MatchedCount == 0 && updatedResult.IsAcknowledged)
+                    {
+                        Console.WriteLine("No matching documents found.");
+                        return false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to Update operation.");
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Update Schedule");
+                var updatedResult = await UpdateScheduleInCalceled(filter, trainSchedule);
+                Console.WriteLine($"updateResult: {updatedResult}");
+                if (updatedResult.IsAcknowledged && updatedResult.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Update Schedule is successful.");
+                    return true;
+                }
+                else if (updatedResult.IsAcknowledged && updatedResult.MatchedCount == 0)
+                {
+                    Console.WriteLine("No matching documents found.");
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("Failed to Update operation.");
+                    return false;
+                }
+            }
+
+
+        }
+        public async Task<UpdateResult> UpdateScheduleInCalceled(FilterDefinition<TrainSchedule> filter, TrainSchedule trainSchedule)
+        {
+            var update = Builders<TrainSchedule>.Update
                 .Set(s => s.TrainNo, trainSchedule.TrainNo)
                 .Set(s => s.WeekType, trainSchedule.WeekType)
                 .Set(s => s.StartStation, trainSchedule.StartStation)
@@ -250,20 +304,11 @@ namespace TravelEase_WebService.Services
                 .Set(s => s.Train, trainSchedule.Train)
                 .Set(s => s.IsPublished, trainSchedule.IsPublished)
                 .Set(s => s.IsCancled, trainSchedule.IsCancled);
-                Console.WriteLine($"update value: {update}");
+            Console.WriteLine($"update value: {update}");
 
-                var updateResult = await _trainCollection.UpdateOneAsync(filter, update);
-
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("called2");
-                return false;
-
-            }
-
-            
+            var updateResult = await _trainCollection.UpdateOneAsync(filter, update);
+            Console.WriteLine("updateResult" + updateResult.ModifiedCount);
+            return updateResult;
         }
     }
 }
