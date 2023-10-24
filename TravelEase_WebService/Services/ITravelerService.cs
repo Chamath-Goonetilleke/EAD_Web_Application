@@ -8,6 +8,7 @@
 ------------------------------------------------------------------------------
 */
 using TravelEase_WebService.DTO;
+using TravelEase_WebService.Models;
 
 namespace TravelEase_WebService.Services
 {
@@ -17,6 +18,7 @@ namespace TravelEase_WebService.Services
         Task CreateNewTraveler(UserDTO userDTO);
         Task<List<CurrentUserDTO>> GetAllTravelers();
         Task<CurrentUserDTO> GetTravelerByNIC(string nic);
+        Task<List<Traveler>> GetAllTravelersToMobile();
         Task UpdateTraveler(UserDTO userDTO);
         Task ImageUploading(IFormFile file, string nic);
         Task ActivateTravelerAccount(string nic);

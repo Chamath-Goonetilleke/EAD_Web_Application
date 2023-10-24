@@ -251,6 +251,12 @@ namespace TravelEase_WebService.Services
                 throw new Exception("No Image File Found");
             }
         }
+
+        public async Task<List<Traveler>> GetAllTravelersToMobile()
+        {
+            var travelers = await _travelerCollection.Find(t => t.Role == "Traveler").ToListAsync();
+            return travelers;
+        }
     }
 }
 

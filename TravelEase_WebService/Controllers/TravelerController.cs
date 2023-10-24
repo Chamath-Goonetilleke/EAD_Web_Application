@@ -100,6 +100,26 @@ namespace TravelEase_WebService.Controllers
         }
 
         //------------------------------------------------------------------------------
+        // Method: GetAllTravelersToMobile
+        // Purpose: Gets a list of all travelers.
+        //------------------------------------------------------------------------------
+        [Route("getAllTravelersToMobile")]
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<ActionResult> GetAllTravelersToMobile()
+        {
+            try
+            {
+                var travelrsList = await _travelerService.GetAllTravelersToMobile();
+                return Ok(travelrsList);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+        }
+
+        //------------------------------------------------------------------------------
         // Method: GetTravelerByNIC
         // Purpose: Gets a traveler by NIC (National Identity Card) number.
         //------------------------------------------------------------------------------
