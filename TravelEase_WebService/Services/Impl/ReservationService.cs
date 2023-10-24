@@ -73,8 +73,8 @@ namespace TravelEase_WebService.Services
             int platform = random.Next(1, 5);
             for (int i =0; i< reservation.Passengers.Count()+1; i++)
             {
-                
-                int ticketNumber = random.Next(1000, 5000);
+                Random random1 = new Random();
+                int ticketNumber = random1.Next(1000, 5000);
                 int seatNO = random.Next(1, 50);
                 
 
